@@ -10,9 +10,7 @@ from typing import (
     Mapping
 )
 
-import pandas as pd
+from pandas import Series, DataFrame
 
 # customized types
-TimeSeries = Union[pd.Series, pd.DataFrame]
-
-
+TimeSeries = Union[Series, DataFrame]
