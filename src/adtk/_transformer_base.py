@@ -1,8 +1,9 @@
 from ._base import _Model1D, _ModelHD
+from ._typing import TimeSeries, Series, DataFrame, Any
 
 
 class _Transformer1D(_Model1D):
-    def fit(self, ts):
+    def fit(self, ts: TimeSeries) -> None:
         """Train the transformer with given time series.
 
         Parameters
@@ -15,7 +16,7 @@ class _Transformer1D(_Model1D):
         """
         self._fit(ts)
 
-    def transform(self, ts):
+    def transform(self, ts: TimeSeries) -> TimeSeries:
         """Transform time series.
 
         Parameters
@@ -33,7 +34,7 @@ class _Transformer1D(_Model1D):
         """
         return self._predict(ts)
 
-    def fit_transform(self, ts):
+    def fit_transform(self, ts: TimeSeries) -> TimeSeries:
         """Train the transformer, and tranform the time series used for
         training.
 
@@ -53,13 +54,13 @@ class _Transformer1D(_Model1D):
         self.fit(ts)
         return self.predict(ts)
 
-    def predict(self, ts, *args, **kwargs):
+    def predict(self, ts: TimeSeries, *args: Any, **kwargs: Any) -> TimeSeries:
         """
         Alias of `transform`.
         """
         return self.transform(ts)
 
-    def fit_predict(self, ts, *args, **kwargs):
+    def fit_predict(self, ts: TimeSeries, *args: Any, **kwargs: Any) -> TimeSeries:
         """
         Alias of `fit_transform`.
         """
@@ -67,7 +68,7 @@ class _Transformer1D(_Model1D):
 
 
 class _TransformerHD(_ModelHD):
-    def fit(self, df):
+    def fit(self, df: DataFrame) -> None:
         """Train the transformer with given time series.
 
         Parameters
@@ -78,7 +79,7 @@ class _TransformerHD(_ModelHD):
         """
         self._fit(df)
 
-    def transform(self, df):
+    def transform(self, df: TimeSeries) -> TimeSeries:
         """Transform time series.
 
         Parameters
@@ -94,7 +95,7 @@ class _TransformerHD(_ModelHD):
         """
         return self._predict(df)
 
-    def fit_transform(self, df):
+    def fit_transform(self, df: TimeSeries) -> TimeSeries:
         """Train the transformer, and tranform the time series used for
         training.
 
@@ -112,13 +113,13 @@ class _TransformerHD(_ModelHD):
         self.fit(df)
         return self.predict(df)
 
-    def predict(self, df, *args, **kwargs):
+    def predict(self, df: TimeSeries, *args: Any, **kwargs: Any) -> TimeSeries:
         """
         Alias of `transform`.
         """
         return self.transform(df)
 
-    def fit_predict(self, df, *args, **kwargs):
+    def fit_predict(self, df: TimeSeries, *args: Any, **kwargs: Any) -> TimeSeries:
         """
         Alias of `fit_transform`.
         """
