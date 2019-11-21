@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from ._typing import TimeSeries, Any, Dict, Iterable, Optional
+from ._typing import TimeSeries, Any, Dict, Iterable, Optional, DataFrame
 from copy import deepcopy
 
 import pandas as pd
@@ -9,7 +9,7 @@ class _Model(ABC):
     _need_fit = True
     _default_params: Dict[Any, Any] = {}
 
-    def __init__(self, **kwargs:Any) -> None:
+    def __init__(self, **kwargs: Any) -> None:
         for key, value in kwargs.items():
             setattr(self, key, value)
             self._fitted = False
@@ -152,7 +152,7 @@ class _Model1D(_Model):
 
 
 class _ModelHD(_Model):
-    def _fit(self, ts: TimeSeries) -> None:
+    def _fit(self, ts: DataFrame) -> None:
         if isinstance(ts, pd.DataFrame):
             df = ts.copy()
             self._fit_core(df)
@@ -160,7 +160,7 @@ class _ModelHD(_Model):
             raise TypeError("Input must be a pandas DataFrame.")
         self._fitted = True
 
-    def _predict(self, ts: TimeSeries) -> TimeSeries:
+    def _predict(self, ts: DataFrame) -> DataFrame:
         if self._need_fit and (not self._fitted):
             raise RuntimeError("The model must be trained first.")
         if isinstance(ts, pd.DataFrame):
@@ -174,21 +174,21 @@ class _ModelHD(_Model):
         return predicted
 
     @abstractmethod
-    def _fit_core(self, ts: TimeSeries) -> None:
+    def _fit_core(self, ts: DataFrame) -> None:
         pass
 
     @abstractmethod
-    def _predict_core(self, ts: TimeSeries) -> TimeSeries:
+    def _predict_core(self, ts: DataFrame) -> DataFrame: 
         pass
 
     @abstractmethod
-    def fit(self, ts: TimeSeries) -> None:
+    def fit(self, ts: DataFrame) -> None:
         pass
 
     @abstractmethod
-    def predict(self, ts: TimeSeries) -> TimeSeries:
+    def predict(self, ts: DataFrame) -> DataFrame:
         pass
 
     @abstractmethod
-    def fit_predict(self, ts: TimeSeries) -> TimeSeries:
+    def fit_predict(self, ts: DataFrame) -> DataFrame:
         pass
