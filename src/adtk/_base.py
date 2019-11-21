@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from ._typing import TimeSeries, Any, Dict, Iterable, Optional
 from copy import deepcopy
 
 import pandas as pd
@@ -6,22 +7,22 @@ import pandas as pd
 
 class _Model(ABC):
     _need_fit = True
-    _default_params = {}
+    _default_params: Dict[Any, Any] = {}
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs:Any) -> None:
         for key, value in kwargs.items():
             setattr(self, key, value)
             self._fitted = False
 
     @abstractmethod
-    def _fit(self, ts):
+    def _fit(self, ts: TimeSeries) -> None:
         pass
 
     @abstractmethod
-    def _predict(self, ts):
+    def _predict(self, ts: TimeSeries) -> None:
         pass
 
-    def get_params(self):
+    def get_params(self) -> Dict[Any, Any]:
         """Get parameters of this model.
 
         Returns
@@ -32,7 +33,7 @@ class _Model(ABC):
         """
         return {key: getattr(self, key) for key in self._default_params.keys()}
 
-    def set_params(self, **kwargs):
+    def set_params(self, **kwargs: Any) -> None:
         """Set parameters of this model.
 
         Parameters
@@ -56,11 +57,11 @@ class _Model(ABC):
 class _Model1D(_Model):
     """Base class of _Detector1D and _Transformer1D."""
 
-    def __init__(self, **kwargs):
-        self._models = None
+    def __init__(self, **kwargs: Any) -> None:
+        self._models: Optional[Dict] = None
         super().__init__(**kwargs)
 
-    def _update_models(self, cols):
+    def _update_models(self, cols: Iterable[Any]) -> None:
         """Update attribute _models with given columns and model parameters.
 
         When a 1D model applied to a DataFrame, it is applied independently to
@@ -86,7 +87,7 @@ class _Model1D(_Model):
         for col in cols:
             self._models[col].set_params(**deepcopy(self.get_params()))
 
-    def _fit(self, ts):
+    def _fit(self, ts: TimeSeries) -> None:
         if isinstance(ts, pd.Series):
             s = ts.copy()
             self._fit_core(s)
@@ -102,7 +103,7 @@ class _Model1D(_Model):
             raise TypeError("Input must be a pandas Series or DataFrame.")
         self._fitted = True
 
-    def _predict(self, ts):
+    def _predict(self, ts: TimeSeries) -> TimeSeries:
         if self._need_fit and (not self._fitted):
             raise RuntimeError("The model must be trained first.")
         if isinstance(ts, pd.Series):
@@ -130,28 +131,28 @@ class _Model1D(_Model):
         return predicted
 
     @abstractmethod
-    def _fit_core(self, ts):
+    def _fit_core(self, ts: TimeSeries) -> None:
         pass
 
     @abstractmethod
-    def _predict_core(self, ts):
+    def _predict_core(self, ts: TimeSeries) -> TimeSeries:
         pass
 
     @abstractmethod
-    def fit(self, ts):
+    def fit(self, ts: TimeSeries) -> None:
         pass
 
     @abstractmethod
-    def predict(self, ts):
+    def predict(self, ts: TimeSeries) -> TimeSeries:
         pass
 
     @abstractmethod
-    def fit_predict(self, ts):
+    def fit_predict(self, ts: TimeSeries) -> TimeSeries:
         pass
 
 
 class _ModelHD(_Model):
-    def _fit(self, ts):
+    def _fit(self, ts: TimeSeries) -> None:
         if isinstance(ts, pd.DataFrame):
             df = ts.copy()
             self._fit_core(df)
@@ -159,7 +160,7 @@ class _ModelHD(_Model):
             raise TypeError("Input must be a pandas DataFrame.")
         self._fitted = True
 
-    def _predict(self, ts):
+    def _predict(self, ts: TimeSeries) -> TimeSeries:
         if self._need_fit and (not self._fitted):
             raise RuntimeError("The model must be trained first.")
         if isinstance(ts, pd.DataFrame):
@@ -173,21 +174,21 @@ class _ModelHD(_Model):
         return predicted
 
     @abstractmethod
-    def _fit_core(self, ts):
+    def _fit_core(self, ts: TimeSeries) -> None:
         pass
 
     @abstractmethod
-    def _predict_core(self, ts):
+    def _predict_core(self, ts: TimeSeries) -> TimeSeries:
         pass
 
     @abstractmethod
-    def fit(self, ts):
+    def fit(self, ts: TimeSeries) -> None:
         pass
 
     @abstractmethod
-    def predict(self, ts):
+    def predict(self, ts: TimeSeries) -> TimeSeries:
         pass
 
     @abstractmethod
-    def fit_predict(self, ts):
+    def fit_predict(self, ts: TimeSeries) -> TimeSeries:
         pass
